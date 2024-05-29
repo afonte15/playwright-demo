@@ -1,5 +1,15 @@
 import { defineConfig, devices } from '@playwright/test';
+import { config } from 'dotenv';
 
+
+if (process.env.test_env) {
+  config({
+    path: `.env.${process.env.test_env}`,
+    override: true,
+  });
+} else {
+  config();
+}
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
