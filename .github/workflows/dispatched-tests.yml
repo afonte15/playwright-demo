@@ -1,28 +1,21 @@
-name: Run Playwright Tests with Config
+name: Run Playwright Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment'
+        required: true
+      tags:
+        description: 'Select the test tags'
+        required: true
 
 jobs:
-  download-and-run-tests:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
-
-      - name: Download test config
-        uses: actions/download-artifact@v2
-        with:
-          name: test-config
-          path: .
-
-      - name: Parse test config
-        id: parse
-        run: |
-          test_env=$(jq -r '.environment' test-config.json)
-          test_tags=$(jq -r '.tags' test-config.json)
-          echo "::set-output name=test_env::$test_env"
-          echo "::set-output name=test_tags::$test_tags"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -37,5 +30,5 @@ jobs:
 
       - name: Run Playwright Tests
         env:
-          TEST_ENV: ${{ steps.parse.outputs.test_env }}
-        run: test_env=${{ steps.parse.outputs.test_env }} npx playwright test --grep ${{ steps.parse.outputs.test_tags }}
+          TEST_ENV: ${{ github.event.inputs.environment }}
+        run: test_env=${{ github.event.inputs.environment }} npx playwright test --grep ${{ github.event.inputs.tags }}
