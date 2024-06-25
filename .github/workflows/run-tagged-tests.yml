@@ -4,6 +4,10 @@ on:
   repository_dispatch:
     types: [run-tests]
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
